@@ -1,10 +1,9 @@
-# Programme
+
 programme :-
   premiere_etape(Tbox,Abi,Abr),
   deuxieme_etape(Abi,Abi1,Tbox),
   troisieme_etape(Abi1,Abr).
 
-# Deuxieme etape
 deuxieme_etape(Abi,Abi1,Tbox) :-
   saisie_et_traitement_prop_a_demontrer(Abi,Abi1,Tbox).
 
@@ -22,7 +21,9 @@ suite(R,Abi,Abi1,Tbox) :-
   nl, write('Cette reponse est incorrecte.'),
   nl, saisie_et_traitement_prop_a_demontrer(Abi,Abi1,Tbox).
 
-# Troisieme etape
+
+
+
 troisieme_etape(Abi,Abr) :-
   tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls),
   resolution(Lie,Lpt,Li,Lu,Ls,Abr),
