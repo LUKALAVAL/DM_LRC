@@ -1,3 +1,5 @@
+:- [pred].
+compteur(1).
 
 programme :-
   premiere_etape(Tbox,Abi,Abr),
@@ -51,10 +53,8 @@ acquisition_prop_type2(Abi,Abi1,Tbox) :-
   nl, read(C2), concept(C2),
   remplace(and(C1,C2),CC),
   nnf(CC,NCC),
+  genere(I),
   Abi1 = [(I,NCC)|Abi].
-
-# Pour Abi1 = [(I,NCC)|Abi]. dans acquisition_prop_type2 je suis pas sur, je sais qu'il faut traduire un il existe une instance tel que I : NCC
-# JSP pourquoi on a jamais besoin de la TBOX jusqu'ici et dans la troisieme etape elle est mm pas en parametre donc elle sert à rien ??
 
 
 
@@ -64,3 +64,10 @@ troisieme_etape(Abi,Abr) :-
   tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls),
   resolution(Lie,Lpt,Li,Lu,Ls,Abr),
   nl, write('Youpiiiiii, on a demontre la proposition initiale !!!').
+
+tri_Abox([],[],[],[],[],[]).
+tri_Abox([(I,some(R,C))|Abi],[(I,some(R,C))|Lie],Lpt,Li,Lu,Ls) :- tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls).
+tri_Abox([(I,all(R,C))|Abi],Lie,[(I,all(R,C))|Lpt],Li,Lu,Ls) :- tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls).
+tri_Abox([(I,and(C1,C2))|Abi],Lie,Lpt,[(I,and(C1,C2))|Li],Lu,Ls) :- tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls).
+tri_Abox([(I,or(C1,C2))|Abi],Lie,Lpt,Li,[(I,or(C1,C2))|Lu],Ls) :- tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls).
+tri_Abox([E|Abi],Lie,Lpt,Li,Lu,[E|Ls]) :- tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls).
