@@ -101,31 +101,79 @@ tri_Abox([E|Abi],Lie,Lpt,Li,Lu,[E|Ls]) :- tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls).
 resolution(Lie,Lpt,Li,Lu,Ls,Abr) :- clash(Ls), nl, write('clash').
 resolution(Lie,Lpt,Li,Lu,Ls,Abr) :- complete_some(Lie,Lpt,Li,Lu,Ls,Abr).
 
-complete_some([(A,some(R,C))|Lie],Lpt,Li,Lu,Ls,Abr) :-
+complete_some([(A,some(R,C))|Lie_],Lpt,Li,Lu,Ls,Abr) :-
   genere(B),
-  resolution(Lie,Lpt,Li,Lu,[(B,C)|Ls],[(A,B,R)|Abr]).
+  Lie = [(A,some(R,C))|Lie_],
+  Ls_ = [(B,C)|Ls],
+  Abr_ = [(A,B,R)|Abr],
+  affiche_evolution_Abox(Lie,Lpt,Li,Lu,Ls,Abr,Lie_,Lpt,Li,Lu,Ls_,Abr_),
+  resolution(Lie_,Lpt,Li,Lu,Ls_,Abr_).
 complete_some([],Lpt,Li,Lu,Ls,Abr) :-
   transformation_and([],Lpt,Li,Lu,Ls,Abr).
 
-transformation_and(Lie,Lpt,[(A,and(C1,C2))|Li],Lu,Ls,Abr) :-
-  resolution(Lie,Lpt,Li,Lu,[(A,C1)|[(A,C2)|Ls]],Abr).
+transformation_and(Lie,Lpt,[(A,and(C1,C2))|Li_],Lu,Ls,Abr) :-
+  Li = [(A,and(C1,C2))|Li_],
+  Ls_ = [(A,C1)|[(A,C2)|Ls]],
+  affiche_evolution_Abox(Lie,Lpt,Li,Lu,Ls,Abr,Lie,Lpt,Li_,Lu,Ls_,Abr),
+  resolution(Lie,Lpt,Li_,Lu,Ls_,Abr).
 transformation_and(Lie,Lpt,[],Lu,Ls,Abr) :-
   deduction_all(Lie,Lpt,[],Lu,Ls,Abr).
 
-deduction_all(Lie,[(A,all(R,C))|Lpt],Li,Lu,Ls,[(A,B,R)|Abr]) :-
-  resolution(Lie,Lpt,Li,Lu,[(B,C)|Lie],[(A,B,R)|Abr]).
+deduction_all(Lie,[(A,all(R,C))|Lpt_],Li,Lu,Ls,[(A,B,R)|Abr_]) :-
+  Lpt = [(A,all(R,C))|Lpt_],
+  Abr = [(A,B,R)|Abr_],
+  Ls_ = [(B,C)|Ls],
+  affiche_evolution_Abox(Lie,Lpt,Li,Lu,Ls,Abr,Lie,Lpt,Li_,Lu,Ls_,Abr),
+  resolution(Lie,Lpt,Li,Lu,Ls_,Abr).
 deduction_all(Lie,[],Li,Lu,Ls,Abr) :-
   transformation_or(Lie,[],Li,Lu,Ls,Abr).
 
-transformation_or(Lie,Lpt,Li,[(A,or(C1,C2))|Lu],Ls,Abr) :-
-  resolution(Lie,Lpt,Li,Lu,[(A,C1)|Ls],Abr),
-  resolution(Lie,Lpt,Li,Lu,[(A,C2)|Ls],Abr).
+transformation_or(Lie,Lpt,Li,[(A,or(C1,C2))|Lu_],Ls,Abr) :-
+  Lu = [(A,or(C1,C2))|Lu_],
+  Ls_1 = [(A,C1)|Ls],
+  affiche_evolution_Abox(Lie,Lpt,Li,Lu,Ls,Abr,Lie,Lpt,Li,Lu_,Ls_1,Abr),
+  resolution(Lie,Lpt,Li,Lu_,Ls_1,Abr),
+  Ls_2 = [(A,C2)|Ls],
+  affiche_evolution_Abox(Lie,Lpt,Li,Lu,Ls,Abr,Lie,Lpt,Li,Lu_,Ls_2,Abr),
+  resolution(Lie,Lpt,Li,Lu_,Ls_2,Abr).
 
 clash([(I,C)|Ls]) :- nnf(not(C),NC), member((I,NC),Ls).
 clash([(I,C)|Ls]) :- clash(Ls).
 
 affiche_evolution_Abox(Ls1, Lie1, Lpt1, Li1, Lu1, Abr1, Ls2, Lie2,
-Lpt2, Li2, Lu2, Abr2).
+Lpt2, Li2, Lu2, Abr2) :-
+  nl, write(" "),
+  nl, write("Ls"),
+  affiche(Ls1,Ls2),
+  nl, write("Lpt"),
+  affiche(Lpt1,Lpt2),
+  nl, write("Li"),
+  affiche(Li1,Li2),
+  nl, write("Lu"),
+  affiche(Lu1,Lu2),
+  nl, write("Abr"),
+  affiche(Abr1,Abr2).
+
+affiche(L1,L2) :-
+  affiche_plus(L1,L2),
+  affiche_moins(L1,L2).
+
+affiche_plus(L1,[E|L2]) :-
+  member(E,L1),
+  affiche_plus(L1,L2).
+affiche_plus(L1,[E|L2]) :-
+  nl, write('+ '), write(E),
+  affiche_plus(L1,L2).
+affiche_plus(_,[]).
+
+affiche_moins([E|L1],L2) :-
+  member(E,L2),
+  affiche_moins(L1,L2).
+affiche_moins([E|L1],L2) :-
+  not(member(E,L2)),
+  nl, write('- '), write(E),
+  affiche_moins(L1,L2).
+affiche_moins([],_).
 
 
 
