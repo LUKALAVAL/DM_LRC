@@ -208,3 +208,9 @@ lecture([X|L]):-
   X \= fin, !,
   lecture(L).
 lecture([]).
+
+evolue((I,some(R,C)), Lie, Lpt, Li, Lu, Ls, [(I,some(R,C))|Lie], Lpt, Li, Lu, Ls).
+evolue((I,all(R,C)), Lie, Lpt, Li, Lu, Ls, Lie, [(I,all(R,C))|Lpt], Li, Lu, Ls).
+evolue((I,and(C1,C2)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, [(I,and(C1,C2))|Li], Lu, Ls).
+evolue((I,or(C1,C2)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, [(I,or(C1,C2))|Lu], Ls).
+evolue(E, Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu, [E|Ls]).
