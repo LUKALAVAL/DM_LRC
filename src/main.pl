@@ -48,19 +48,19 @@ acquisition_prop_type1(Abi,Abi1,Tbox) :-
   nl, read(I), instance(I),
   nl, write('Entrez un concept :'),
   nl, read(C), concept(C),
-  remplace(C,CC),
-  nnf(not(CC),NCC),
-  Abi1 = [(I,NCC)|Abi].
+  remplace(C,C_),
+  nnf(not(C_),NC_),
+  Abi1 = [(I,NC_)|Abi].
 
 acquisition_prop_type2(Abi,Abi1,Tbox) :-
   nl, write('Entrez un concept (1) :'),
   nl, read(C1), concept(C1),
   nl, write('Entrez un concept (2) :'),
   nl, read(C2), concept(C2),
-  remplace(and(C1,C2),CC),
-  nnf(CC,NCC),
+  remplace(and(C1,C2),C_),
+  nnf(C_,NC_),
   genere(I),
-  Abi1 = [(I,NCC)|Abi].
+  Abi1 = [(I,NC_)|Abi].
 
 concept(C) :- cnamea(C), !.
 concept(C) :- cnamena(C), !.
@@ -73,12 +73,12 @@ concept(all(R,C)) :- rname(R), concept(C), !.
 instance(I) :- iname(I), !.
 
 remplace(C,C) :- cnamea(C).
-remplace(not(C),not(CC)) :- remplace(C,CC).
-remplace(and(C1,C2),and(CC1,CC2)) :- remplace(C1,CC1), remplace(C2,CC2).
-remplace(or(C1,C2),or(CC1,CC2)) :- remplace(C1,CC1), remplace(C2,CC2).
-remplace(some(R,C),some(R,CC)) :- remplace(C,CC).
-remplace(all(R,C),all(R,CC)) :- remplace(C,CC).
-remplace(C,CC) :- equiv(C,D), remplace(D,CC).
+remplace(not(C),not(C_)) :- remplace(C,C_).
+remplace(and(C1,C2),and(C_1,C_2)) :- remplace(C1,C_1), remplace(C2,C_2).
+remplace(or(C1,C2),or(C_1,C_2)) :- remplace(C1,C_1), remplace(C2,C_2).
+remplace(some(R,C),some(R,C_)) :- remplace(C,C_).
+remplace(all(R,C),all(R,C_)) :- remplace(C,C_).
+remplace(C,C_) :- equiv(C,D), remplace(D,C_).
 
 
 
@@ -97,12 +97,6 @@ tri_Abox([(I,all(R,C))|Abi],Lie,[(I,all(R,C))|Lpt],Li,Lu,Ls) :- tri_Abox(Abi,Lie
 tri_Abox([(I,and(C1,C2))|Abi],Lie,Lpt,[(I,and(C1,C2))|Li],Lu,Ls) :- tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls).
 tri_Abox([(I,or(C1,C2))|Abi],Lie,Lpt,Li,[(I,or(C1,C2))|Lu],Ls) :- tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls).
 tri_Abox([E|Abi],Lie,Lpt,Li,Lu,[E|Ls]) :- tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls).
-tri_Abox(_,Lie,Lpt,Li,Lu,Ls) :-
-  nl, write("Lie "), write(Lie),
-  nl, write("Lpt "), write(Lpt),
-  nl, write("Li "), write(Li),
-  nl, write("Lu "), write(Lu),
-  nl, write("Ls "), write(Ls).
 
 resolution(_,_,_,_,Ls,_) :- clash(Ls).
 resolution(Lie,Lpt,Li,Lu,Ls,Abr) :- complete_some(Lie,Lpt,Li,Lu,Ls,Abr).
@@ -160,6 +154,9 @@ transformation_or(Lie,Lpt,Li,[E|Lu],Ls,Abr) :-
   resolution(Lie2,Lpt2,Li2,Lu2,Ls2,Abr2),
   nl, write('EXIT OR (2)').
 
+clash([(I,nothing)|Ls]) :-
+  member((I,_),Ls),
+  nl, write('CLASH').
 clash([(I,C)|Ls]) :-
   nnf(not(C),NC),
   member((I,NC),Ls),
@@ -184,6 +181,7 @@ Lpt2, Li2, Lu2, Ls2, Abr2) :-
   nl, write('   Lu'),
   affiche(Lu1,Lu2),
   nl, write('   Ls'),
+  nl, write(Ls2),
   affiche(Ls1,Ls2),
   nl, write('   Abr'),
   affiche(Abr1,Abr2),
