@@ -1,5 +1,3 @@
-:- [box].
-
 /**** PROGRAMME ****/
 
 programme :-
@@ -87,7 +85,8 @@ remplace(C,C_) :- equiv(C,D), remplace(D,C_).
 /**** TROISIEME PARTIE ****/
 
 troisieme_etape(Abi,Abr) :-
-  tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls), !,
+  tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls),
+  affiche_evolution_Abox([],[],[],[],[],[],Lie,Lpt,Li,Lu,Ls,Abr), !,
   resolution(Lie,Lpt,Li,Lu,Ls,Abr),
   nl, write('Youpiiiiii, on a demontre la proposition initiale !!!').
 
@@ -181,7 +180,6 @@ Lpt2, Li2, Lu2, Ls2, Abr2) :-
   nl, write('   Lu'),
   affiche(Lu1,Lu2),
   nl, write('   Ls'),
-  nl, write(Ls2),
   affiche(Ls1,Ls2),
   nl, write('   Abr'),
   affiche(Abr1,Abr2),
@@ -226,24 +224,16 @@ sublime(C) :- write(C).
 
 compteur(1).
 
-autoref(C,C) :- cnamea(C).
-autoref(C,C) :- cnamena(C).
-autoref(C,D) :- cnamea(C), equiv(D,E), autoref(C,E).
-autoref(C,D) :- cnamena(C), equiv(D,E), autoref(C,E).
-autoref(C,and(D,_)) :- cnamea(C), autoref(C,D).
-autoref(C,and(D,_)) :- cnamena(C), autoref(C,D).
-autoref(C,and(_,D)) :- cnamea(C), autoref(C,D).
-autoref(C,and(_,D)) :- cnamena(C), autoref(C,D).
-autoref(C,or(D,_)) :- cnamea(C), autoref(C,D).
-autoref(C,or(D,_)) :- cnamena(C), autoref(C,D).
-autoref(C,or(_,D)) :- cnamea(C), autoref(C,D).
-autoref(C,or(_,D)) :- cnamena(C), autoref(C,D).
-autoref(C,not(D)) :- cnamea(C), autoref(C,D).
-autoref(C,not(D)) :- cnamena(C), autoref(C,D).
-autoref(C,some(_,D)) :- cnamea(C), autoref(C,D).
-autoref(C,some(_,D)) :- cnamena(C), autoref(C,D).
-autoref(C,all(_,D)) :- cnamea(C), autoref(C,D).
-autoref(C,all(_,D)) :- cnamena(C), autoref(C,D).
+autoref(C,C) :- cnamea(C), !.
+autoref(C,C) :- cnamena(C), !.
+autoref(C,D) :- equiv(D,E), autoref(C,E), !.
+autoref(C,and(D,_)) :- autoref(C,D), !.
+autoref(C,and(_,D)) :- autoref(C,D), !.
+autoref(C,or(D,_)) :- autoref(C,D), !.
+autoref(C,or(_,D)) :- autoref(C,D), !.
+autoref(C,not(D)) :- autoref(C,D), !.
+autoref(C,some(_,D)) :- autoref(C,D), !.
+autoref(C,all(_,D)) :- autoref(C,D), !.
 
 nnf(not(anything), nothing).
 nnf(not(nothing), anything).
